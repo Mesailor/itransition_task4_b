@@ -16,7 +16,7 @@ class DataBase {
       registrationTime: Date.now(),
       status: "active",
     };
-    return await User.create(newUser);
+    return await new User(newUser).save();
   }
   async updateStatus(ids, status) {
     let results = [];

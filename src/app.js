@@ -20,11 +20,16 @@ app.get("/users", async (req, res) => {
   }
 });
 app.post("/create-user", async (req, res) => {
+  if (await dataBase.getUserByEmail(req.body.user.email)) {
+    return res
+      .status(400)
+      .send({ message: "User with this email already exist!" });
+  }
   try {
     const user = await dataBase.createUser(req.body.user);
     return res.status(200).send({ message: "User created succesfully!", user });
-  } catch {
-    return res.status(500).send({ message: "Sorry, something went wrong..." });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
   }
 });
 app.put("/update-status", async (req, res) => {
