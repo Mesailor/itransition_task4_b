@@ -1,4 +1,5 @@
 const User = require("./User");
+const security = require("./services/security");
 
 class DataBase {
   async getAll() {
@@ -11,7 +12,7 @@ class DataBase {
     const newUser = {
       name: user.name,
       email: user.email,
-      password: user.password, // create hash from user.password
+      password: await security.createHash(user.password),
       lastLoginTime: Date.now(),
       registrationTime: Date.now(),
       status: "active",

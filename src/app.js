@@ -4,6 +4,7 @@ const app = express();
 const dataBase = require("./dataBase");
 const mongoose = require("mongoose");
 const config = require("config");
+const security = require("./services/security");
 
 const mongoCredentials = config.get("db_credentials");
 const port = config.get("port");
@@ -52,11 +53,15 @@ app.delete("/delete", async (req, res) => {
   }
 });
 app.post("/auth", async (req, res) => {
-  let { email, password } = req.body.user; // create hash from req password
-
+  let { email, password } = req.body.user;
   const user = await dataBase.getUserByEmail(email);
 
-  if (!user || user.password !== password) {
+  if (!(await security.checkPassword(password, user.password))) {
+    return res
+      .status(400)
+      .send({ message: "Wrong email or password!", result: false });
+  }
+  if (!user) {
     return res
       .status(400)
       .send({ message: "Wrong email or password!", result: false });
