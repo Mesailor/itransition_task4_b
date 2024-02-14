@@ -56,12 +56,12 @@ app.post("/auth", async (req, res) => {
   let { email, password } = req.body.user;
   const user = await dataBase.getUserByEmail(email);
 
-  if (!(await security.checkPassword(password, user.password))) {
+  if (!user) {
     return res
       .status(400)
       .send({ message: "Wrong email or password!", result: false });
   }
-  if (!user) {
+  if (!(await security.checkPassword(password, user.password))) {
     return res
       .status(400)
       .send({ message: "Wrong email or password!", result: false });
